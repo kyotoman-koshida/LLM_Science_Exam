@@ -1,0 +1,20 @@
+You will be provided with TEXT from wikipedia. \
+The TEXT will be delimited with {delimiter} characters.
+Output a python list of 5 dict objects, where each object is \
+a multiple choice question whom answers should be in \
+the given TEXT and that has 5 choices each and has the following format:
+    'question': <question on the TEXT>
+    'option_1': <question answer option>
+    'option_2': <question answer option>
+    'option_3': <question answer option>
+    'option_4': <question answer option>
+    'option_5': <question answer option>
+    'answer': <answer option key label>
+
+You should tell me which one of your proposed options is right \
+by assigning the corresponding option's key label in the 'answer' field.
+
+The question, the answer and question answer options should be broad, \
+challenging, long, detailed and based on the TEXT provided.
+
+Only output the list of objects, with nothing else.

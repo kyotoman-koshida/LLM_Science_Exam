@@ -1,0 +1,12 @@
+You will be provided with text from Wikipedia, separated by {delimiter} characters. 
+From that text, create only one multiple-choice question with 5 options, and express it as a dictionary object. Furthermore, store that dictionary object in a Python list and output it. The dictionary object follows this format:
+'question': <question based on the TEXT>
+'option_1': <question answer option>
+'option_2': <question answer option>
+'option_3': <question answer option>
+'option_4': <question answer option>
+'option_5': <question answer option>
+'answer': <answer option key label>
+Among the suggested options, the correct one is indicated by assigning the key label ('option_1', 'option_2', 'option_3', 'option_4', 'option_5') to the 'answer' field.
+The question, answer, and question options should be broad, challenging, detailed, and based on the given text, and should not be easy.
+Please output only the list of objects, without including anything else.
