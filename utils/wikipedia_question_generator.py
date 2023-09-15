@@ -95,22 +95,23 @@ class WikipediaQuestionGenerator:
         generated_count = 0
         attempts_count = 0
         iterate_count = 0
+        now = get_str_today()
         while generated_count < pages_count:
             iterate_count += 1
             self.logger.info(f"generated_count:{generated_count}")
-            seed = generated_count+attempts_count+iterate_count+seed
+            seed = iterate_count+seed
             wiki_text, page_id, page_title, category_label = self.__get_wiki_text(seen_pages=seen_pages, seed=seed, sentences_include=7)
             self.logger.info(f"\nStart multiple choice questions generation: page_id={page_id}, page_title={page_title}, category_label={category_label}")
             
             messages = self.__get_completion_messages(wiki_text)
-            today = get_str_today()
             while True:
                 try:
                     chatgpt_response = self.__get_completion_from_messages(messages)
                     mcq = eval(chatgpt_response)
 
                     if not isinstance(mcq, list) or not self.__is_correctly_formatted(mcq):
-                        self.logger.warning("ChatGPTの回答フォーマットが正しくありません")
+                        self.logger.warning("-----ChatGPTの回答フォーマットが正しくありません-----")
+                        self.logger.info("mcq",mcq)
                         raise Exception
 
                     for i in range(len(mcq)):
@@ -123,13 +124,18 @@ class WikipediaQuestionGenerator:
                             continue
                         else:
                             # TODO: indexメソッドは、answerがリスト形式ではないとエラーを返すため注意
-                            answ_indx = [v.lower() for v in mcq[i].values()].index(mcq[i]["answer"].lower())
+                            try:
+                                answ_indx = [v.lower() for v in mcq[i].values()].index(mcq[i]["answer"].lower())
+                            except:
+                                self.logger.warning("answ_indexの取得でエラーが発生")
+                                raise Exception
                             mcq[i]["answer"] = list(mcq[i].keys())[answ_indx]
 
                     multiple_choice_questions += mcq
-                    with open(f'../output/pickle/generate_question_{today}.pickle', 'wb') as f:
+                    with open(f'../output/pickle/generate_question_{now}.pickle', 'wb') as f:
                         pickle.dump(multiple_choice_questions, f)
                     seen_pages.append(page_id)
+                    iterate_count += 1
                     generated_count += 1
                     self.logger.info(f"seed:{seed-1}")
                     # NOTE: 
@@ -139,13 +145,14 @@ class WikipediaQuestionGenerator:
                     # iterate_count+=1をイテレートの最後に持ってくるのは同じWikipediaのページをループする可能性があり危険。
                     break
                 except Exception:
+                    iterate_count += 1
                     attempts_count += 1
                     self.logger.warning("正しくChatGPTの回答が得られませんでした")
                     attempts_list.append(attempts_count)
                     if attempts_count > max_completion_attempts:
                         break
 
-            with open(f'../output/pickle/seen_pages_{today}.pickle', 'wb') as f:
+            with open(f'../output/pickle/seen_pages_{now}.pickle', 'wb') as f:
                 pickle.dump(seen_pages, f)
         
         return multiple_choice_questions, seen_pages, attempts_list
