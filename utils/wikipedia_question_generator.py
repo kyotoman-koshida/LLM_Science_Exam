@@ -110,7 +110,8 @@ class WikipediaQuestionGenerator:
                     mcq = eval(chatgpt_response)
 
                     if not isinstance(mcq, list) or not self.__is_correctly_formatted(mcq):
-                        self.logger.warning("ChatGPTの回答フォーマットが正しくありません")
+                        self.logger.warning("-----ChatGPTの回答フォーマットが正しくありません-----")
+                        self.logger.info("mcq",mcq)
                         raise Exception
 
                     for i in range(len(mcq)):
