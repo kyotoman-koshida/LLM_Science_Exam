@@ -124,7 +124,11 @@ class WikipediaQuestionGenerator:
                             continue
                         else:
                             # TODO: indexメソッドは、answerがリスト形式ではないとエラーを返すため注意
-                            answ_indx = [v.lower() for v in mcq[i].values()].index(mcq[i]["answer"].lower())
+                            try:
+                                answ_indx = [v.lower() for v in mcq[i].values()].index(mcq[i]["answer"].lower())
+                            except:
+                                self.logger.warning("answ_indexの取得でエラーが発生")
+                                raise Exception
                             mcq[i]["answer"] = list(mcq[i].keys())[answ_indx]
 
                     multiple_choice_questions += mcq
