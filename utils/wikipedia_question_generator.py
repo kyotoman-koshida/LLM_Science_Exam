@@ -378,7 +378,12 @@ class WikipediaQuestionGenerator:
         self.logger.info("課金されました")
         #NOTE: 少し前まではresponse.choices[0].message["content"]だったが、これだとエラーが出るようになった。
         # OpenAIのAPIのフォーマットが変わった？
-        return response["choices"][0]["message"]["content"]
+        try:
+            return response["choices"][0]["message"]["content"]
+        except:
+            self.logger.warning("responseの形式に誤りがあります。")
+            self.logger.warning(response)
+            raise Exception
     
     @staticmethod
     def conver_to_compet_format_df(multiple_choice_questions: list)-> pd.DataFrame:
